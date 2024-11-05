@@ -4,6 +4,7 @@ import 'package:candy_store/cart_page.dart';
 import 'package:candy_store/product_list_item.dart';
 import 'package:candy_store/products_page.dart';
 import 'package:flutter/material.dart';
+import 'package:candy_store/cart_notifier.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -13,7 +14,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final List<CartListItem> cartItems = [];
+  CartNotifier cartNotifier = CartNotifier();
+  //final List<CartListItem> cartItems = []; // no longer needed due to CartNotifier
 
   // The Map key is the id of the CartListItem. We will use a Map data structure
   // because it is easier to manage the addition, removal & count of the items.
@@ -21,15 +23,12 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final totalCount = cartItemsMap.values.fold<int>(
-      0,
-      (previousValue, element) => previousValue + element.quantity,
-    );
+    final totalCount = cartNotifier.totalItems;
 
     return Stack(
       children: [
         ProductsPage(
-          onAddToCart: addToCart,
+          cartNotifier: cartNotifier,
         ),
         Positioned(
           right: 16,
@@ -45,55 +44,32 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  // TODO: Make this implementation more efficient via a Map
-  void addToCart(ProductListItem item) {
-    CartListItem? existingItem = cartItemsMap[item.id];
-    if (existingItem != null) {
-      existingItem = CartListItem(
-        product: existingItem.product,
-        quantity: existingItem.quantity + 1,
-      );
-      cartItemsMap[item.id] = existingItem;
-      setState(() {});
-    } else {
-      setState(() {
-        final cartItem = CartListItem(
-          product: item,
-          quantity: 1,
-        );
-        cartItemsMap[item.id] = cartItem;
-      });
-    }
-  }
-
-  void removeFromCart(CartListItem item) {
-    CartListItem? existingItem = cartItemsMap[item.product.id];
-    if (existingItem != null) {
-      if (existingItem.quantity > 1) {
-        existingItem = CartListItem(
-          product: existingItem.product,
-          quantity: existingItem.quantity - 1,
-        );
-        cartItemsMap[item.product.id] = existingItem;
-        setState(() {});
-      } else {
-        cartItemsMap.remove(item.product.id);
-        setState(() {});
-      }
-    }
-  }
-
   void openCart() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CartPage(
-          items: cartItemsMap.values.toList(),
-          onAddToCart: (item) {
-            addToCart(item.product);
-          },
-          onRemoveFromCart: removeFromCart,
+          cartNotifier: cartNotifier,
         ),
       ),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+    cartNotifier.addListener(() {
+      setState(() {
+        print('Cart updated JRI');
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    print('MainPage dispose JRI');
+    cartNotifier.dispose();
+    super.dispose();
+  }
+  
 }

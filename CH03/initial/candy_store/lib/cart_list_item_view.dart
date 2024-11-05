@@ -1,16 +1,19 @@
 import 'package:candy_store/cart_list_item.dart';
 import 'package:flutter/material.dart';
+import 'package:candy_store/cart_notifier.dart';
 
 class CartListItemView extends StatelessWidget {
   final CartListItem item;
-  final Function(CartListItem) onRemoveFromCart;
-  final Function(CartListItem) onAddToCart;
+  CartNotifier? cartNotifier;
+  //final Function(CartListItem) onRemoveFromCart;
+  //final Function(CartListItem) onAddToCart;
 
-  const CartListItemView({
+  CartListItemView({
     Key? key,
     required this.item,
-    required this.onRemoveFromCart,
-    required this.onAddToCart,
+    required this.cartNotifier,
+    //required this.onRemoveFromCart,
+    //required this.onAddToCart,
   }) : super(key: key);
 
   @override
@@ -59,7 +62,7 @@ class CartListItemView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          onPressed: () => onRemoveFromCart(item),
+                          onPressed: () => cartNotifier?.removeFromCart(item),
                           icon: Icon(
                             Icons.remove,
                             color: iconColor,
@@ -73,7 +76,7 @@ class CartListItemView extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: () => onAddToCart(item),
+                          onPressed: () => cartNotifier?.addToCart(item.product),
                           icon: Icon(
                             Icons.add,
                             color: iconColor,

@@ -1,17 +1,14 @@
 import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_list_item_view.dart';
 import 'package:flutter/material.dart';
+import 'package:candy_store/cart_notifier.dart';
 
 class CartPage extends StatefulWidget {
-  final List<CartListItem> items;
-  final Function(CartListItem) onRemoveFromCart;
-  final Function(CartListItem) onAddToCart;
+  final CartNotifier cartNotifier;
 
   const CartPage({
     super.key,
-    required this.items,
-    required this.onRemoveFromCart,
-    required this.onAddToCart,
+    required this.cartNotifier,
   });
 
   @override
@@ -25,9 +22,23 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
-    _items = widget.items;
-    _calculateTotalPrice();
+    widget.cartNotifier.addListener(_updateCart);
+    //_items = widget.cartNotifier.items;
+    _totalPrice = widget.cartNotifier.totalPrice;
   }
+
+  @override
+  void dispose() {
+    widget.cartNotifier.removeListener(_updateCart);
+    super.dispose();
+  }
+
+  void _updateCart() {
+    setState((){
+      print('_updateCart in CartPage JRI');
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +52,12 @@ class _CartPageState extends State<CartPage> {
             padding: const EdgeInsets.only(bottom: 60),
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              itemCount: _items.length,
+              itemCount: widget.cartNotifier.items.length,
               itemBuilder: (context, index) {
-                final item = _items[index];
+                final item = widget.cartNotifier.items[index];
                 return CartListItemView(
                   item: item,
-                  onRemoveFromCart: _removeFromCart,
-                  onAddToCart: _addToCart,
+                  cartNotifier: widget.cartNotifier,
                 );
               },
             ),
@@ -76,7 +86,7 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                   Text(
-                    '$_totalPrice €',
+                    '${widget.cartNotifier.totalPrice} €',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -92,50 +102,4 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  void _removeFromCart(CartListItem item) {
-    setState(() {
-      final index = _items.indexWhere(
-        (i) => i.product.id == item.product.id,
-      );
-      if (index != -1) {
-        final existingItem = _items[index];
-        final newQuantity = existingItem.quantity - 1;
-        if (newQuantity > 0) {
-          _items[index] = CartListItem(
-            product: existingItem.product,
-            quantity: newQuantity,
-          );
-        } else {
-          _items.removeAt(index);
-        }
-      }
-      _calculateTotalPrice();
-    });
-    widget.onRemoveFromCart(item);
-  }
-
-  void _addToCart(CartListItem item) {
-    setState(() {
-      final index = _items.indexWhere(
-        (i) => i.product.id == item.product.id,
-      );
-      if (index != -1) {
-        final existingItem = _items[index];
-        _items[index] = CartListItem(
-          product: existingItem.product,
-          quantity: existingItem.quantity + 1,
-        );
-      }
-      _calculateTotalPrice();
-    });
-    widget.onAddToCart(item);
-  }
-
-  void _calculateTotalPrice() {
-    _totalPrice = _items.fold(
-      0,
-      (previousValue, element) =>
-          previousValue + element.product.price * element.quantity,
-    );
-  }
 }
