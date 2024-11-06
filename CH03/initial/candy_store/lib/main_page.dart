@@ -4,6 +4,7 @@ import 'package:candy_store/cart_page.dart';
 import 'package:candy_store/product_list_item.dart';
 import 'package:candy_store/products_page.dart';
 import 'package:flutter/material.dart';
+import 'package:candy_store/cart_notifier_provider.dart';
 import 'package:candy_store/cart_notifier.dart';
 
 class MainPage extends StatefulWidget {
@@ -14,7 +15,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  CartNotifier cartNotifier = CartNotifier();
+  late CartNotifier cartNotifier;
   //final List<CartListItem> cartItems = []; // no longer needed due to CartNotifier
 
   // The Map key is the id of the CartListItem. We will use a Map data structure
@@ -24,12 +25,10 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final totalCount = cartNotifier.totalItems;
-
+    
     return Stack(
       children: [
-        ProductsPage(
-          cartNotifier: cartNotifier,
-        ),
+        ProductsPage(),
         Positioned(
           right: 16,
           bottom: 16,
@@ -57,19 +56,27 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    cartNotifier.addListener(() {
-      setState(() {
-        print('Cart updated JRI');
-      });
-    });
+
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cartNotifier = CartProvider.of(context); // Initialize cartNotifier from context
+    cartNotifier.addListener(_updateCart);
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    cartNotifier.removeListener(_updateCart);
     print('MainPage dispose JRI');
-    cartNotifier.dispose();
     super.dispose();
+  }
+
+  void _updateCart() {
+    setState(() {
+      print('_updateCart in MainPage JRI');
+    });
   }
   
 }

@@ -2,19 +2,20 @@ import 'package:candy_store/product_details_page.dart';
 import 'package:candy_store/product_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:candy_store/cart_notifier.dart';
+import 'package:candy_store/cart_notifier_provider.dart';
 
 class ProductListItemView extends StatelessWidget {
   final ProductListItem item;
-  final CartNotifier cartNotifier;
+
   
   const ProductListItemView({
     super.key,
     required this.item,
-    required this.cartNotifier,
   });
 
   @override
   Widget build(BuildContext context) {
+    CartNotifier cartNotifier = CartProvider.of(context); // getting the CartNotifier from the context
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(

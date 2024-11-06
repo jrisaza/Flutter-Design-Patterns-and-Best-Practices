@@ -2,6 +2,7 @@ import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_list_item_view.dart';
 import 'package:flutter/material.dart';
 import 'package:candy_store/cart_notifier.dart';
+import 'package:candy_store/cart_notifier_provider.dart';
 
 class CartPage extends StatefulWidget {
   final CartNotifier cartNotifier;
@@ -16,15 +17,18 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  List<CartListItem> _items = [];
-  double _totalPrice = 0;
+  late CartNotifier cartNotifier;
 
   @override
   void initState() {
     super.initState();
-    widget.cartNotifier.addListener(_updateCart);
-    //_items = widget.cartNotifier.items;
-    _totalPrice = widget.cartNotifier.totalPrice;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cartNotifier = CartProvider.of(context); // Initialize cartNotifier from context
+    cartNotifier.addListener(_updateCart);
   }
 
   @override
@@ -54,10 +58,9 @@ class _CartPageState extends State<CartPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               itemCount: widget.cartNotifier.items.length,
               itemBuilder: (context, index) {
-                final item = widget.cartNotifier.items[index];
+                final item = cartNotifier.items[index];
                 return CartListItemView(
                   item: item,
-                  cartNotifier: widget.cartNotifier,
                 );
               },
             ),
