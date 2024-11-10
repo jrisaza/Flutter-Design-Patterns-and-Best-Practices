@@ -1,7 +1,6 @@
 import 'package:candy_store/cart_button.dart';
 import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_page.dart';
-import 'package:candy_store/product_list_item.dart';
 import 'package:candy_store/products_page.dart';
 import 'package:flutter/material.dart';
 import 'package:candy_store/cart_notifier_provider.dart';
@@ -46,9 +45,7 @@ class _MainPageState extends State<MainPage> {
   void openCart() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => CartPage(
-          cartNotifier: cartNotifier,
-        ),
+        builder: (context) => CartPage(),
       ),
     );
   }

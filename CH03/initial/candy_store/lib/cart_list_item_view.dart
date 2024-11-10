@@ -1,12 +1,11 @@
 import 'package:candy_store/cart_list_item.dart';
 import 'package:flutter/material.dart';
-import 'package:candy_store/cart_notifier.dart';
 import 'package:candy_store/cart_notifier_provider.dart';
 
 class CartListItemView extends StatelessWidget {
   final CartListItem item;
 
-  CartListItemView({
+  const CartListItemView({
     Key? key,
     required this.item,
     //required this.onRemoveFromCart,
@@ -17,7 +16,7 @@ class CartListItemView extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = item.product;
     final iconColor = Theme.of(context).colorScheme.secondary;
-    CartNotifier cartNotifier = CartProvider.of(context);
+    final cartNotifier = CartProvider.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         vertical: 12,

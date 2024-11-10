@@ -1,15 +1,11 @@
-import 'package:candy_store/cart_list_item.dart';
 import 'package:candy_store/cart_list_item_view.dart';
 import 'package:flutter/material.dart';
-import 'package:candy_store/cart_notifier.dart';
 import 'package:candy_store/cart_notifier_provider.dart';
 
 class CartPage extends StatefulWidget {
-  final CartNotifier cartNotifier;
 
   const CartPage({
     super.key,
-    required this.cartNotifier,
   });
 
   @override
@@ -17,7 +13,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  late CartNotifier cartNotifier;
+  late var cartNotifier;
 
   @override
   void initState() {
@@ -33,7 +29,7 @@ class _CartPageState extends State<CartPage> {
 
   @override
   void dispose() {
-    widget.cartNotifier.removeListener(_updateCart);
+    cartNotifier.removeListener(_updateCart);
     super.dispose();
   }
 
@@ -56,7 +52,7 @@ class _CartPageState extends State<CartPage> {
             padding: const EdgeInsets.only(bottom: 60),
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              itemCount: widget.cartNotifier.items.length,
+              itemCount: cartNotifier.items.length,
               itemBuilder: (context, index) {
                 final item = cartNotifier.items[index];
                 return CartListItemView(
@@ -89,7 +85,7 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                   Text(
-                    '${widget.cartNotifier.totalPrice} €',
+                    '${cartNotifier.totalPrice} €',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
