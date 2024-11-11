@@ -1,6 +1,6 @@
 import 'package:candy_store/cart_list_item_view.dart';
 import 'package:flutter/material.dart';
-import 'package:candy_store/cart_notifier_provider.dart';
+import 'package:candy_store/cart_view_model_provider.dart';
 
 class CartPage extends StatefulWidget {
 
@@ -13,7 +13,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  late var cartNotifier;
+  late var cartViewModel;
 
   @override
   void initState() {
@@ -23,13 +23,13 @@ class _CartPageState extends State<CartPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    cartNotifier = CartProvider.of(context); // Initialize cartNotifier from context
-    cartNotifier.addListener(_updateCart);
+    cartViewModel = CartViewModelProvider.of(context); // Initialize cartNotifier from context
+    cartViewModel.addListener(_updateCart);
   }
 
   @override
   void dispose() {
-    cartNotifier.removeListener(_updateCart);
+    cartViewModel.removeListener(_updateCart);
     super.dispose();
   }
 
@@ -52,9 +52,9 @@ class _CartPageState extends State<CartPage> {
             padding: const EdgeInsets.only(bottom: 60),
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              itemCount: cartNotifier.items.length,
+              itemCount: cartViewModel.items.length,
               itemBuilder: (context, index) {
-                final item = cartNotifier.items[index];
+                final item = cartViewModel.items[index];
                 return CartListItemView(
                   item: item,
                 );
@@ -85,7 +85,7 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                   Text(
-                    '${cartNotifier.totalPrice} €',
+                    '${cartViewModel.totalPrice} €',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
